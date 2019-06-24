@@ -5,9 +5,9 @@ function toOrd($char)
     $dec = ord($char);
 
     if ($dec >= ord('0') && $dec <= ord('9')) {
-        return ord($char) - ord('0');
+        return $dec - ord('0');
     } else {
-        return ord($char) - ord('A') + 10;
+        return $dec - ord('A') + 10;
     }
 }
 
