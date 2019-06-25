@@ -11,17 +11,20 @@ function toOrd($char)
     }
 }
 
-function toDecimal($str, $base)
-{
-    $num = 0;
 
-    for ($i = strlen($str) - 1, $p = 0; $i >= 0; --$i, ++$p) {
-        if (toOrd($str[$i]) >= $base) {
-            return 'Incorrect number';
+function toDecimal($base)
+{
+    return function ($str) use ($base) {
+        $num = 0;
+
+        for ($i = strlen($str) - 1, $p = 0; $i >= 0; --$i, ++$p) {
+            if (toOrd($str[$i]) >= $base) {
+                return 'Incorrect number';
+            }
+            $num += toOrd($str[$i]) * pow($base, $p);
         }
-        $num += toOrd($str[$i]) * pow($base, $p);
-    }
-    return $num;
+        return $num;
+    };
 }
 
 function toChar($decimal)
@@ -33,23 +36,28 @@ function toChar($decimal)
     }
 }
 
-function toBase($number, $base)
+function toBase($base)
 {
-    $result = '';
+    return function ($number) use($base) {
+        $result = '';
 
-    while ($number > 0) {
-        $result .= toChar($number % $base);
-        $number = (int)($number / $base);
-    }
-    $result = strrev($result);
-    return $result;
+        while ($number > 0) {
+            $result .= toChar($number % $base);
+            $number = (int)($number / $base);
+        }
+        $result = strrev($result);
+        return $result;
+    };
 }
+
 
 function sumBase36($lOperand, $rOperand)
 {
-    $decimalL = toDecimal($lOperand, 36);
-    $decimalR = toDecimal($rOperand, 36);
-    return toBase($decimalL + $decimalR, 36);
+    $toDecimalBase36 = toDecimal(36);
+    $decimalL = $toDecimalBase36($lOperand);
+    $decimalR = $toDecimalBase36($rOperand);
+    $toBase36 = toBase(36);
+    return $toBase36($decimalL + $decimalR);
 }
 
 echo 'Base36: Z + 1 = ' . sumBase36('Z', '1') . PHP_EOL;
